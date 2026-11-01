@@ -10,14 +10,14 @@
 
 Por isso o projeto usa **dois repositórios**:
 
-- **`tabela-preco` (público)** — o site e a tabela oficial (`data/produtos.json`, `data/config.json`). Qualquer pessoa com o link vê.
+- **`tabela-preco` (público)** — o site e a tabela oficial (`produtos.json`, `config.json`). Qualquer pessoa com o link vê.
 - **`tabela-preco-especiais` (privado)** — as tabelas especiais. Só quem tem acesso ao repositório consegue abrir. Elas **não** ficam no site público.
 
 Conteúdo do pacote:
 
 | Arquivo | Vai para |
 |---|---|
-| `index.html`, `admin.html`, `especiais.html`, `assets/`, `data/`, `LEIAME.md` | repositório **público** `tabela-preco` |
+| `index.html`, `admin.html`, `especiais.html`, `produtos.json`, `config.json`, `LEIAME.md` | repositório **público** `tabela-preco` (6 arquivos soltos na raiz, sem pastas) |
 | `repositorio-privado/acesso.json` e `repositorio-privado/LEIAME.md` | repositório **privado** `tabela-preco-especiais` (na raiz, sem a pasta `repositorio-privado`) |
 
 ---
@@ -34,7 +34,7 @@ A organização permite que cada supervisor use a própria conta do GitHub, com 
 ## 2. Criar o repositório público e publicar o site
 
 1. Na organização: **New repository** → nome `tabela-preco` → **Public** → **Create repository**.
-2. **uploading an existing file** → arraste `index.html`, `admin.html`, `especiais.html`, `LEIAME.md` e as pastas `assets` e `data` (não envie a pasta `repositorio-privado`) → **Commit changes**.
+2. **uploading an existing file** (Fazer upload de arquivos) → selecione **os 6 arquivos** desta pasta e arraste juntos → **Commit changes**. Não há pastas: tudo fica solto na raiz. Confira se os nomes ficaram exatamente `index.html`, `admin.html`, `especiais.html` (sem "[1]" ou "(1)").
 3. **Settings → Pages** → *Source*: **Deploy from a branch** → *Branch*: **main**, pasta **/ (root)** → **Save**.
 4. Em 1 a 2 minutos o endereço aparece: `https://nmc-gart.github.io/tabela-preco/`
 
@@ -98,7 +98,7 @@ O desconto é calculado sobre a tabela oficial do momento: se houver reajuste, a
 3. **Reajuste por família** — % por família (ou o mesmo % para todas), confira a prévia e **Aplicar reajuste**.
 4. Clique em **Salvar no GitHub**. O site atualiza em 1 a 2 minutos.
 
-Sem token: faça as alterações, clique em **Baixar arquivos alterados** e envie para a pasta `data/` do repositório público.
+Sem token: faça as alterações, clique em **Baixar arquivos alterados** e envie para o repositório público, substituindo os arquivos com o mesmo nome.
 
 Tudo fica no **Histórico** e o GitHub guarda as versões anteriores de cada arquivo.
 
@@ -110,7 +110,7 @@ Tudo fica no **Histórico** e o GitHub guarda as versões anteriores de cada arq
 
 ## 9. Quando o Formulário de Orçamento mudar
 
-Envie o formulário atualizado ao Claude no projeto "Tabela de preço NMC GART – Nacional". Ele gera um novo `data/produtos.json` (e o Excel) para enviar à pasta `data/` do repositório público. Se você fez reajuste pelo site, atualize os preços no formulário antes (ou peça ao Claude para aplicar o mesmo percentual).
+Envie o formulário atualizado ao Claude no projeto "Tabela de preço NMC GART – Nacional". Ele gera um novo `produtos.json` (e o Excel) para enviar ao repositório público, substituindo o antigo. Se você fez reajuste pelo site, atualize os preços no formulário antes (ou peça ao Claude para aplicar o mesmo percentual).
 
 ## 10. Bom saber
 

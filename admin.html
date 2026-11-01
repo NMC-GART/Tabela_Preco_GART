@@ -7,7 +7,146 @@
 <title>Administração · Tabela de Preço GART</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="assets/app.css">
+<style>
+[hidden]{display:none!important}
+
+:root{
+  /* Identidade GART (mesma do Formulário de Cadastro de Cliente): laranja #FF671F, petróleo #005A69, Raleway */
+  color-scheme:light;
+  --orange:#FF671F; --orange-dark:#e0551a; --petrol:#005A69; --petrol-dark:#00434e;
+  --paper:#f7f7f6; --surface:#ffffff; --ink:#231F20; --muted:#6b6668; --line:#e3e1df; --line2:#efedeb;
+  --accent:#005A69; --accent-soft:#E0EEF0; --warn:#e0551a; --warn-soft:#FFF0E8; --band:#F2F6F6;
+  --head:#005A69; --onhead:#ffffff;
+  --fd:"Raleway",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; --fb:"Raleway",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.45 var(--fb);padding:0 16px 48px;font-variant-numeric:tabular-nums}
+.wrap{max-width:1480px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;margin-top:16px;padding:22px 24px 18px;border-radius:10px;background:linear-gradient(160deg,var(--petrol) 0%,var(--petrol-dark) 100%);color:#fff;border-bottom:4px solid var(--orange)}
+.brand{font:800 15px var(--fb);letter-spacing:.12em;color:#fff;margin-bottom:6px}
+.brand span{color:var(--orange)}
+h1{font:800 clamp(22px,3.4vw,30px)/1.1 var(--fd);letter-spacing:.03em;text-transform:uppercase;margin:0;text-wrap:balance;color:#fff}
+.sub{color:#cfeaef;font-size:13px;margin-top:8px}
+.rev{font:700 12px var(--fd);letter-spacing:.08em;text-transform:uppercase;color:#cfeaef}
+.rev a{color:#fff}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:14px 12px;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.row{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end}
+.field{display:grid;gap:5px}
+.lbl{font:600 11px var(--fd);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lbl b{color:var(--warn)}
+.seg{display:inline-flex;border:1.5px solid var(--petrol);border-radius:6px;overflow:hidden}
+.seg button{font:600 15px var(--fd);letter-spacing:.02em;padding:8px 18px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--petrol)}
+.seg button[aria-pressed="true"]{background:var(--petrol);color:#fff}
+select,input[type=search]{font:500 15px var(--fb);color:var(--ink);background:var(--surface);border:1px solid #cfccc9;border-radius:6px;padding:8px 10px;min-height:40px}
+select{min-width:190px}
+input[type=search]{width:min(280px,100%)}
+.need select,.need .seg{outline:2px dashed var(--warn);outline-offset:3px}
+:focus-visible{outline:2px solid var(--orange)!important;outline-offset:2px}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 12.5px var(--fd);letter-spacing:.03em;padding:4px 10px;border-radius:999px;background:var(--band);color:var(--ink);border:1px solid var(--line)}
+.chip.ok{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.fams{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.fams button{flex:none;font:500 13px var(--fb);padding:5px 11px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fams button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
+.filters select{min-width:0;width:auto;max-width:200px;font-size:14px;min-height:36px;padding:6px 8px;border-width:1px;border-color:var(--line)}
+.filters select.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.clear{font:600 13px var(--fd);letter-spacing:.03em;padding:8px 12px;border-radius:6px;border:1px solid var(--warn);background:transparent;color:var(--warn);cursor:pointer;min-height:36px}
+.count{font-size:13px;color:var(--muted);align-self:center;margin-left:auto}
+thead tr.grp th.dims,thead th.dims{background:#0b6b7b}
+td.lin{white-space:nowrap;font-size:13px}
+td.dim{color:var(--ink);background:var(--band)}
+tr.p:hover td.dim{background:var(--accent-soft)}
+tr.nm td{border-top:1px solid var(--line)}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid rgba(0,0,0,.25);vertical-align:-1px;margin-right:6px}
+td.cor{white-space:nowrap;font-size:13px}
+.ean{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+.flag{color:var(--warn);font-weight:700;margin-left:3px;cursor:help}
+.gate{margin-top:28px;border:1.5px dashed var(--warn);background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:22px 24px;max-width:640px}
+.gate h2{font:700 20px var(--fd);margin:0 0 6px;color:var(--warn)}
+.gate p{margin:0;color:var(--ink)}
+.tablebox{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13.5px}
+thead th{background:var(--head);color:var(--onhead);font:600 12px var(--fd);letter-spacing:.06em;text-transform:uppercase;padding:8px 9px;text-align:left;white-space:nowrap;position:sticky;top:0}
+thead tr.grp th{font-size:11px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.12)}
+thead tr.grp th.money{background:var(--petrol-dark);color:#fff;border-bottom:2px solid var(--orange)}
+th.num,td.num{text-align:right}
+th.c,td.c{text-align:center}
+tbody td{padding:7px 9px;border-bottom:1px solid var(--line2);vertical-align:top}
+tbody tr.fam td{background:var(--band);font:700 13.5px var(--fd);letter-spacing:.05em;text-transform:uppercase;color:var(--petrol);padding:9px 10px;border-bottom:2px solid var(--orange)}
+tbody tr.fam td span{font:500 12px var(--fb);text-transform:none;letter-spacing:0;color:var(--muted);margin-left:8px}
+tbody tr.p:hover td{background:var(--accent-soft)}
+td.mod{font-weight:600;white-space:nowrap;position:sticky;left:0;background:var(--surface)}
+tr.p:hover td.mod{background:var(--accent-soft)}
+td.cod{color:var(--muted);font-size:12.5px;white-space:nowrap}
+td.small,div.small{color:var(--muted);font-size:12.5px}
+td.tax{color:var(--muted);white-space:nowrap}
+td.money{white-space:nowrap}
+td.strong{font-weight:600;color:var(--accent)}
+td.sep{border-left:1px solid var(--line)}
+.u{font-size:11px;color:var(--muted);margin-left:2px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.notes{margin-top:26px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.notes section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.notes h3{font:700 15px var(--fd);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+.notes ul{margin:0;padding-left:18px;color:var(--ink);font-size:13.5px;display:grid;gap:5px}
+.notes .muted{color:var(--muted)}
+@media (max-width:640px){.filters .field{flex:1 1 45%}.filters select{max-width:none;width:100%}.count{margin-left:0}.seg button{padding:8px 14px}select{min-width:0;width:100%}.field.uf{flex:1 1 140px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:600 13.5px var(--fd);letter-spacing:.03em;padding:8px 14px;border-radius:6px;border:1.5px solid var(--petrol);background:var(--surface);color:var(--petrol);cursor:pointer;min-height:38px;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:var(--petrol);border-color:var(--petrol);color:#fff}
+.btn.accent{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.colpanel{position:relative}
+.colpanel .menu{position:absolute;left:0;top:calc(100% + 6px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:14px 16px;width:min(340px,86vw);display:grid;gap:10px}
+.menu h4{margin:0;font:700 12px var(--fd);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.menu .presets{display:flex;flex-wrap:wrap;gap:6px}
+.menu .presets button{font:500 12.5px var(--fb);padding:4px 9px;border-radius:5px;border:1px solid var(--line);background:var(--band);color:var(--ink);cursor:pointer}
+.menu .cols{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:13.5px}
+.menu label{display:flex;gap:7px;align-items:center;cursor:pointer}
+.tabsel select{min-width:220px}
+.banner{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--warn-soft);color:var(--ink);border:1px solid var(--warn);font-size:14px}
+.banner b{color:var(--warn)}
+.foot{margin-top:22px;color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+.foot a{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:8px;font-size:14px;z-index:50}
+
+.notes h3{color:var(--petrol);border-bottom:2px solid var(--orange);padding-bottom:6px}
+select:focus,input:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+
+/* ---- painéis (admin / especiais) ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-top:18px}
+.card h2{font:700 15px var(--fd);margin:0 0 8px;letter-spacing:.05em;text-transform:uppercase;color:var(--petrol);border-bottom:2px solid var(--orange);padding-bottom:8px}
+.card p.help{margin:0 0 14px;color:var(--muted);font-size:13.5px;max-width:80ch}
+.grid{display:grid;gap:12px 16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid .wide{grid-column:1/-1}
+input[type=text],input[type=password],input[type=date],input[type=number],textarea{font:500 15px var(--fb);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;min-height:40px;width:100%}
+textarea{min-height:64px;resize:vertical}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;border-bottom:2px solid var(--petrol)}
+.tabs button{font:600 14px var(--fd);letter-spacing:.03em;padding:9px 16px;border:1px solid var(--line);border-bottom:0;border-radius:6px 6px 0 0;background:var(--surface);color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+.ptable{border-collapse:collapse;width:100%;min-width:0;font-size:14px}
+.ptable th{background:var(--head);color:var(--onhead);font:600 12px var(--fd);letter-spacing:.06em;text-transform:uppercase;padding:7px 9px;text-align:left;position:static}
+.ptable td{padding:6px 9px;border-bottom:1px solid var(--line2)}
+.ptable input{width:110px;min-height:34px;text-align:right}
+.up{color:#B42318;font-weight:600}.down{color:var(--accent);font-weight:600}
+.status{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+.dot{width:10px;height:10px;border-radius:50%;background:#B42318;display:inline-block}
+.dot.on{background:#1F9D55}
+.pending{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:10px 14px;margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.esp-list{display:grid;gap:8px}
+.esp-item{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.esp-item .t{font-weight:600}
+.esp-item .m{color:var(--muted);font-size:13px}
+.linkbox{font-size:12.5px;color:var(--muted);word-break:break-all}
+.hist li{margin-bottom:6px}
+
+</style>
 
 </head>
 <body>
@@ -87,9 +226,272 @@
   <h2>Histórico de revisões</h2>
   <ul class="hist" id="hist"></ul>
 </section>
-<div class="foot"><span>Os arquivos ficam na pasta <b>data/</b> do repositório: produtos.json e config.json.</span><a href="index.html">Tabela de preço</a></div>
+<div class="foot"><span style="opacity:.6">site v3 · 01/11/2026</span><span>Os dados ficam nos arquivos <b>produtos.json</b> e <b>config.json</b>, na raiz do repositório.</span><a href="index.html">Tabela de preço</a></div>
 </div>
-<script src="assets/common.js"></script>
-<script src="assets/admin.js"></script>
+<script>
+/* Tabela de Preço NMC GART — lógica compartilhada (consulta e administração) */
+const GART = (() => {
+  const UFN = {AC:"Acre",AL:"Alagoas",AP:"Amapá",AM:"Amazonas",BA:"Bahia",CE:"Ceará",DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MT:"Mato Grosso",MS:"Mato Grosso do Sul",MG:"Minas Gerais",PA:"Pará",PB:"Paraíba",PR:"Paraná",PE:"Pernambuco",PI:"Piauí",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",RS:"Rio Grande do Sul",RO:"Rondônia",RR:"Roraima",SC:"Santa Catarina",SP:"São Paulo",SE:"Sergipe",TO:"Tocantins"};
+  const SW = {"002":"#B8A29C","003":"#1F1F1F","005":"#D9CBA6","009":"#A4A7A9","010":"#5B5F63","011":"#3C3F43","012":"#BBA98E","014":"#F5F5F1"};
+
+  async function getJSON(path) {
+    const r = await fetch(path + "?v=" + Date.now(), {cache: "no-store"});
+    if (!r.ok) throw new Error("Não foi possível carregar " + path);
+    return r.json();
+  }
+  function rowsOf(prod) {
+    return prod.linhas.map(a => Object.fromEntries(prod.campos.map((k, i) => [k, a[i]])));
+  }
+  async function load() {
+    if (window.GART_DATA) { const {prod, cfg} = window.GART_DATA; return {prod, cfg, rows: rowsOf(prod)}; }  // versão de prévia (arquivo único)
+    const [prod, cfg] = await Promise.all([getJSON("produtos.json"), getJSON("config.json")]);
+    return {prod, cfg, rows: rowsOf(prod)};
+  }
+
+  /* Preço — mesma regra do Formulário de Orçamento 2026:
+     Revenda: coluna de preço pelo ICMS da UF; AM = × fator Suframa; IPI e ST sobre o preço (já com desconto, se houver).
+     Construtora: preço único (ICMS 18% incluso), sem ST. */
+  function price(x, ctx) {
+    const {canal, uf, prod, desconto} = ctx;
+    const t = prod.ufs[uf];
+    const icms = canal === "Construtora" ? 0.18 : t.icms;
+    const cheio = icms === 0.18 ? x.p18 : icms === 0.12 ? x.p12 : x.p7;
+    const d = desconto ? (desconto(x) || 0) : 0;
+    const base = cheio * (1 - d / 100);
+    const suf = canal === "Revenda" && uf === "AM";
+    const st = canal === "Construtora" ? 0 : (t[x.st_cat] || 0);
+    const tab = suf ? base * prod.suframa : base;
+    const com = tab + base * (x.ipi + st);
+    return {icms, st, cheio, desc: d, tab, com, m: x.med_qtd ? tab / x.med_qtd : null, mc: x.med_qtd ? com / x.med_qtd : null};
+  }
+  function descontoFn(tabela) {
+    if (!tabela) return null;
+    return x => {
+      const f = tabela.descontos && tabela.descontos[x.familia];
+      return (f !== undefined && f !== null && f !== "") ? Number(f) : Number(tabela.desconto_geral || 0);
+    };
+  }
+
+  const brl = v => v == null ? "" : v.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
+  const pct = v => v ? (v * 100).toLocaleString("pt-BR", {maximumFractionDigits: 2}) + "%" : "–";
+  const mm = v => v == null ? "–" : Number(v).toLocaleString("pt-BR");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const dataBR = iso => { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}/${m}/${y}`; };
+
+  /* Colunas disponíveis (o usuário escolhe quais aparecem; o export segue a mesma escolha) */
+  const COLS = [
+    {k: "modelo", t: "Modelo", fixo: true},
+    {k: "cor", t: "Cor"},
+    {k: "codigo", t: "Código"},
+    {k: "ean", t: "EAN"},
+    {k: "linha", t: "Descrição"},
+    {k: "esp", t: "Espessura (mm)", num: true},
+    {k: "alt", t: "Altura (mm)", num: true},
+    {k: "comp", t: "Comprimento (mm)", num: true},
+    {k: "unidade", t: "Unidade de venda"},
+    {k: "embalagem", t: "Embalagem (cx)"},
+    {k: "ipi", t: "IPI", imp: true},
+    {k: "st", t: "ST", imp: true},
+    {k: "tab", t: "Preço tabela (unid.)", money: true},
+    {k: "com", t: "Preço c/ impostos (unid.)", money: true, imp: true},
+    {k: "m", t: "Preço tabela (por m)", money: true, metro: true},
+    {k: "mc", t: "Preço c/ impostos (por m)", money: true, imp: true, metro: true},
+  ];
+  const PRESETS = {
+    "Completa": COLS.map(c => c.k),
+    "Sem impostos": COLS.filter(c => !c.imp).map(c => c.k),
+    "Com EAN": ["modelo", "cor", "codigo", "ean", "linha", "unidade", "embalagem", "tab", "com"],
+    "Compacta": ["modelo", "cor", "codigo", "linha", "unidade", "tab", "com"],
+  };
+  /* valor "cru" de uma coluna, usado no Excel/PDF */
+  function value(x, p, k) {
+    switch (k) {
+      case "ipi": return x.ipi;
+      case "st": return p.st;
+      case "tab": return p.tab;
+      case "com": return p.com;
+      case "m": return p.m;
+      case "mc": return p.mc;
+      case "unidade": return x.unidade + (x.composicao ? ` (${x.composicao})` : "");
+      default: return x[k] ?? "";
+    }
+  }
+  function slug(s) {
+    return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+  }
+  function toast(msg) {
+    const el = document.createElement("div"); el.className = "toast"; el.textContent = msg;
+    document.body.appendChild(el); setTimeout(() => el.remove(), 3200);
+  }
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
+  return {UFN, SW, load, getJSON, rowsOf, price, descontoFn, brl, pct, mm, esc, dataBR, COLS, PRESETS, value, slug, toast, store};
+})();
+
+</script>
+<script>
+/* Tabela de Preço NMC GART — administração */
+(async () => {
+  const G = GART, $ = id => document.getElementById(id);
+  const FILES = {prod: "produtos.json", cfg: "config.json"};
+  const S = {conn: null, data: {}, sha: {}, dirty: new Set()};
+  const hoje = () => new Date().toISOString().slice(0, 10);
+
+  /* ---------- GitHub (API de conteúdo) ---------- */
+  const b64enc = str => { const bytes = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+  const b64dec = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, "")), c => c.charCodeAt(0)));
+  async function gh(path, opts = {}) {
+    const c = S.conn;
+    const url = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}` + (opts.method ? "" : `?ref=${encodeURIComponent(c.branch)}`);
+    const r = await fetch(url, {method: opts.method || "GET", headers: {Authorization: `Bearer ${c.token}`, Accept: "application/vnd.github+json"}, body: opts.body ? JSON.stringify(opts.body) : undefined});
+    if (!r.ok) { const t = await r.json().catch(() => ({})); throw new Error(`${r.status} ${t.message || ""}`.trim()); }
+    return r.json();
+  }
+  async function loadFromGitHub() {
+    for (const [k, p] of Object.entries(FILES)) {
+      const j = await gh(p); S.sha[k] = j.sha; S.data[k] = JSON.parse(b64dec(j.content));
+    }
+  }
+  async function loadFromSite() {
+    for (const [k, p] of Object.entries(FILES)) S.data[k] = await G.getJSON(p);
+  }
+
+  /* ---------- conexão ---------- */
+  const guess = () => {
+    const h = location.hostname, parts = location.pathname.split("/").filter(Boolean);
+    return h.endsWith(".github.io") ? {owner: h.split(".")[0], repo: parts[0] || ""} : {owner: "", repo: ""};
+  };
+  const saved = G.store.get("gart.admin", null) || {};
+  const g0 = guess();
+  $("gh-owner").value = saved.owner || g0.owner; $("gh-repo").value = saved.repo || g0.repo;
+  $("gh-branch").value = saved.branch || "main"; $("gh-token").value = saved.token || ""; $("remember").checked = !!saved.token;
+
+  function setStatus(ok, txt) { $("dot").classList.toggle("on", ok); $("conn-status").textContent = txt; $("btn-save").disabled = !ok; }
+  $("btn-connect").addEventListener("click", async () => {
+    const c = {owner: $("gh-owner").value.trim(), repo: $("gh-repo").value.trim(), branch: $("gh-branch").value.trim() || "main", token: $("gh-token").value.trim()};
+    if (!c.owner || !c.repo || !c.token) return G.toast("Preencha usuário, repositório e token.");
+    if (S.dirty.size && !window.__confirmReload) { G.toast("Há alterações não salvas. Salve, baixe ou descarte antes de entrar."); return; }
+    S.conn = c;
+    try {
+      setStatus(false, "Conectando…");
+      await loadFromGitHub();
+      G.store.set("gart.admin", $("remember").checked ? c : {owner: c.owner, repo: c.repo, branch: c.branch});
+      setStatus(true, `Conectado a ${c.owner}/${c.repo} (${c.branch}) — as alterações são gravadas direto no site`);
+      S.dirty.clear(); refreshAll();
+    } catch (e) { S.conn = null; setStatus(false, "Não foi possível entrar: " + e.message + ". Confira usuário, repositório e token."); }
+  });
+  $("btn-logout").addEventListener("click", () => { G.store.del("gart.admin"); $("gh-token").value = ""; S.conn = null; setStatus(false, "Sem conexão — modo de edição com download dos arquivos"); });
+
+  /* ---------- alterações pendentes ---------- */
+  function markDirty(k) { S.dirty.add(k); pending(); }
+  function pending() {
+    const n = S.dirty.size; $("pending").hidden = !n;
+    const nomes = {prod: "preços", cfg: "título/revisão"};
+    $("pending-txt").innerHTML = `<b>Alterações ainda não publicadas:</b> ${[...S.dirty].map(k => nomes[k]).join(", ")}.` + (S.conn ? "" : " Sem conexão: baixe os arquivos e envie para o repositório (substituindo os arquivos com o mesmo nome).");
+  }
+  $("btn-save").addEventListener("click", async () => {
+    if (!S.conn) return;
+    const msg = `Tabela de preço: ${S.data.cfg.revisao} (${[...S.dirty].join(", ")}) — ${hoje()}`;
+    try {
+      for (const k of [...S.dirty]) {
+        const body = {message: msg, content: b64enc(JSON.stringify(S.data[k], null, k === "prod" ? 0 : 2)), branch: S.conn.branch, sha: S.sha[k]};
+        const r = await gh(FILES[k], {method: "PUT", body}); S.sha[k] = r.content.sha; S.dirty.delete(k);
+      }
+      pending(); G.toast("Salvo no GitHub. O site atualiza em 1 a 2 minutos.");
+    } catch (e) { G.toast("Erro ao salvar: " + e.message + ". Se alguém alterou ao mesmo tempo, clique em Entrar de novo."); }
+  });
+  $("btn-download").addEventListener("click", () => {
+    for (const k of S.dirty) {
+      const blob = new Blob([JSON.stringify(S.data[k], null, k === "prod" ? 0 : 2)], {type: "application/json"});
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = FILES[k].split("/")[1]; document.body.appendChild(a); a.click(); a.remove();
+    }
+    G.toast("Arquivos baixados. Envie-os para o repositório (Adicionar arquivo → Fazer upload de arquivos), substituindo os antigos.");
+  });
+  $("btn-discard").addEventListener("click", async () => { S.dirty.clear(); pending(); if (S.conn) await loadFromGitHub(); else await loadFromSite(); refreshAll(); G.toast("Alterações descartadas."); });
+  window.addEventListener("beforeunload", e => { if (S.dirty.size) { e.preventDefault(); e.returnValue = ""; } });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+    document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== b.dataset.tab);
+  }));
+
+  /* ---------- título e revisão ---------- */
+  function fillCfg() {
+    const c = S.data.cfg;
+    $("c-titulo").value = c.titulo || ""; $("c-rev").value = c.revisao || ""; $("c-vig").value = c.vigencia || "";
+    $("c-emp").value = c.empresa || ""; $("c-obs").value = c.observacao || "";
+  }
+  $("btn-cfg").addEventListener("click", () => {
+    const c = S.data.cfg;
+    const novo = {titulo: $("c-titulo").value.trim(), revisao: $("c-rev").value.trim(), vigencia: $("c-vig").value, empresa: $("c-emp").value.trim(), observacao: $("c-obs").value.trim()};
+    if (!novo.titulo) return G.toast("O título não pode ficar vazio.");
+    const mudou = Object.keys(novo).filter(k => novo[k] !== (c[k] || ""));
+    if (!mudou.length) return G.toast("Nada mudou.");
+    Object.assign(c, novo);
+    (c.historico = c.historico || []).push({data: hoje(), revisao: c.revisao, descricao: "Título/revisão/vigência alterados: " + mudou.join(", "), percentuais: {}});
+    markDirty("cfg"); refreshAll(); G.toast("Aplicado. Lembre de salvar.");
+  });
+
+  /* ---------- reajuste ---------- */
+  function rows() { return G.rowsOf(S.data.prod); }
+  function fillReaj() {
+    const c = S.data.cfg, prod = S.data.prod, rs = rows();
+    $("r-tit").value = c.titulo; $("r-rev").value = nextRev(c.revisao); $("r-vig").value = hoje();
+    $("r-body").innerHTML = prod.familias.map(f => {
+      const ex = rs.find(x => x.familia === f && x.canal === "Revenda") || rs.find(x => x.familia === f);
+      const n = rs.filter(x => x.familia === f).length;
+      return `<tr data-f="${G.esc(f)}"><td><b>${G.esc(f)}</b></td><td><input type="number" step="0.01" value="" placeholder="0"></td><td>${n}</td><td class="small">${ex ? G.esc(ex.canal + " · " + ex.modelo + (ex.cor ? " " + ex.cor : "")) : ""}</td><td class="num">${ex ? G.brl(ex.p18) : ""}</td><td class="num depois"></td></tr>`;
+    }).join("");
+    preview();
+  }
+  const nextRev = r => { const m = String(r || "").match(/(\d+)\s*$/); return m ? r.replace(/(\d+)\s*$/, String(Number(m[1]) + 1).padStart(m[1].length, "0")) : (r ? r + " (reajuste)" : "Rev. 02"); };
+  function pcts() { const o = {}; document.querySelectorAll("#r-body tr").forEach(tr => { const v = parseFloat(tr.querySelector("input").value.replace(",", ".")); if (!isNaN(v) && v) o[tr.dataset.f] = v; }); return o; }
+  function preview() {
+    const P = pcts(), rs = rows(), canal = $("r-canal").value; let n = 0;
+    document.querySelectorAll("#r-body tr").forEach(tr => {
+      const f = tr.dataset.f, ex = rs.find(x => x.familia === f && (canal === "ambos" || x.canal === canal));
+      const p = P[f] || 0, td = tr.querySelector(".depois");
+      td.innerHTML = ex && p ? `${G.brl(ex.p18 * (1 + p / 100))} <span class="${p > 0 ? "up" : "down"}">${p > 0 ? "+" : ""}${String(p).replace(".", ",")}%</span>` : "";
+      if (p) n += rs.filter(x => x.familia === f && (canal === "ambos" || x.canal === canal)).length;
+    });
+    $("r-sum").textContent = n ? `${n} itens serão reajustados` : "Nenhum percentual informado";
+  }
+  $("r-body").addEventListener("input", preview); $("r-canal").addEventListener("change", preview);
+  $("r-geral").addEventListener("input", e => { document.querySelectorAll("#r-body input").forEach(i => i.value = e.target.value); preview(); });
+  $("btn-reaj").addEventListener("click", () => {
+    const P = pcts(), canal = $("r-canal").value;
+    if (!Object.keys(P).length) return G.toast("Informe ao menos um percentual.");
+    const prod = S.data.prod, ci = Object.fromEntries(prod.campos.map((k, i) => [k, i]));
+    let n = 0;
+    prod.linhas.forEach(l => {
+      const p = P[l[ci.familia]]; if (!p || (canal !== "ambos" && l[ci.canal] !== canal)) return;
+      for (const k of ["p18", "p12", "p7"]) l[ci[k]] = Math.round(l[ci[k]] * (1 + p / 100) * 10000) / 10000;
+      n++;
+    });
+    prod.versao = hoje();
+    const c = S.data.cfg;
+    c.titulo = $("r-tit").value.trim() || c.titulo; c.revisao = $("r-rev").value.trim() || c.revisao; c.vigencia = $("r-vig").value || c.vigencia;
+    (c.historico = c.historico || []).push({data: hoje(), revisao: c.revisao, descricao: `Reajuste (${canal === "ambos" ? "Revenda e Construtora" : canal}) em ${n} itens`, percentuais: P});
+    markDirty("prod"); markDirty("cfg"); refreshAll(); G.toast(`Reajuste aplicado em ${n} itens. Lembre de salvar.`);
+  });
+
+  /* ---------- histórico ---------- */
+  function fillHist() {
+    const H = [...(S.data.cfg.historico || [])].reverse();
+    $("hist").innerHTML = H.map(h => `<li><b>${G.dataBR(h.data)} · ${G.esc(h.revisao || "")}</b> — ${G.esc(h.descricao || "")}${h.percentuais && Object.keys(h.percentuais).length ? `<div class="small">${Object.entries(h.percentuais).map(([f, p]) => `${G.esc(f)} ${p > 0 ? "+" : ""}${String(p).replace(".", ",")}%`).join(" · ")}</div>` : ""}</li>`).join("") || "<li>Sem registros.</li>";
+  }
+
+  function refreshAll() { fillCfg(); fillReaj(); fillHist(); pending(); }
+
+  try { await loadFromSite(); refreshAll(); setStatus(false, "Sem conexão — modo de edição com download dos arquivos"); }
+  catch (e) { G.toast("Não foi possível carregar os dados: " + e.message); }
+  if (saved.token) $("btn-connect").click();
+})();
+
+</script>
 </body>
 </html>
