@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Administração · Tabela de Preço GART</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="brand">GART<span>.</span></div>
+    <h1>Administração da Tabela de Preço</h1>
+    <div class="sub">Reajuste por família, título e revisão da tabela oficial. As alterações valem para todos que consultam a tabela. Tabelas especiais com desconto ficam na página <a href="especiais.html" style="color:#fff">Tabelas especiais</a> (acesso restrito).</div>
+  </div>
+  <div class="rev"><a href="index.html">← Tabela oficial</a> · <a href="especiais.html">Tabelas especiais →</a></div>
+</header>
+
+<section class="card" id="conn">
+  <h2>Acesso de administrador</h2>
+  <p class="help">Para gravar direto no site, informe o token do GitHub (é a "senha" de administrador — veja o passo a passo no LEIAME). Sem token, você pode fazer as alterações aqui e baixar os arquivos para enviar ao GitHub manualmente.</p>
+  <div class="grid">
+    <div class="field"><label class="lbl" for="gh-owner">Usuário/organização no GitHub</label><input type="text" id="gh-owner" placeholder="ex.: nmcgart"></div>
+    <div class="field"><label class="lbl" for="gh-repo">Repositório</label><input type="text" id="gh-repo" placeholder="ex.: tabela-preco"></div>
+    <div class="field"><label class="lbl" for="gh-branch">Branch</label><input type="text" id="gh-branch" value="main"></div>
+    <div class="field"><label class="lbl" for="gh-token">Token (senha de administrador)</label><input type="password" id="gh-token" placeholder="github_pat_…" autocomplete="off"></div>
+  </div>
+  <div class="toolbar" style="margin-top:12px">
+    <button type="button" class="btn primary" id="btn-connect">Entrar</button>
+    <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="remember"> Lembrar neste computador</label>
+    <button type="button" class="btn" id="btn-logout">Sair</button>
+    <span class="status"><span class="dot" id="dot"></span><span id="conn-status">Sem conexão — modo de edição com download dos arquivos</span></span>
+  </div>
+</section>
+
+<div class="pending" id="pending" hidden>
+  <span id="pending-txt"></span>
+  <span class="toolbar">
+    <button type="button" class="btn accent" id="btn-save">Salvar no GitHub</button>
+    <button type="button" class="btn" id="btn-download">Baixar arquivos alterados</button>
+    <button type="button" class="btn" id="btn-discard">Descartar</button>
+  </span>
+</div>
+
+<div class="tabs" role="tablist">
+  <button type="button" role="tab" data-tab="titulo" aria-selected="true">Título e revisão</button>
+  <button type="button" role="tab" data-tab="reajuste" aria-selected="false">Reajuste por família</button>
+  <button type="button" role="tab" data-tab="historico" aria-selected="false">Histórico</button>
+</div>
+
+<section class="card" data-panel="titulo">
+  <h2>Título, revisão e vigência</h2>
+  <p class="help">Aparecem no topo da tabela, no Excel e no PDF. Ex.: "Tabela de Preço Nacional 2027" · "Rev. 02".</p>
+  <div class="grid">
+    <div class="field wide"><label class="lbl" for="c-titulo">Título</label><input type="text" id="c-titulo"></div>
+    <div class="field"><label class="lbl" for="c-rev">Revisão</label><input type="text" id="c-rev"></div>
+    <div class="field"><label class="lbl" for="c-vig">Vigência a partir de</label><input type="date" id="c-vig"></div>
+    <div class="field"><label class="lbl" for="c-emp">Empresa</label><input type="text" id="c-emp"></div>
+    <div class="field wide"><label class="lbl" for="c-obs">Observação (rodapé da tabela e do PDF)</label><input type="text" id="c-obs"></div>
+  </div>
+  <div class="toolbar" style="margin-top:12px"><button type="button" class="btn primary" id="btn-cfg">Aplicar</button></div>
+</section>
+
+<section class="card" data-panel="reajuste" hidden>
+  <h2>Reajuste por família</h2>
+  <p class="help">Digite o percentual de cada família (ex.: 5 para +5%; use negativo para reduzir). Confira a prévia e aplique. O reajuste altera a tabela oficial; as tabelas especiais acompanham, porque o desconto é calculado sobre ela.</p>
+  <div class="grid">
+    <div class="field"><label class="lbl" for="r-canal">Aplicar em</label>
+      <select id="r-canal"><option value="ambos">Revenda e Construtora</option><option value="Revenda">Só Revenda</option><option value="Construtora">Só Construtora</option></select></div>
+    <div class="field"><label class="lbl" for="r-geral">Mesmo % para todas as famílias</label><input type="number" id="r-geral" step="0.01" placeholder="ex.: 5"></div>
+    <div class="field"><label class="lbl" for="r-rev">Nova revisão</label><input type="text" id="r-rev"></div>
+    <div class="field"><label class="lbl" for="r-vig">Nova vigência</label><input type="date" id="r-vig"></div>
+    <div class="field wide"><label class="lbl" for="r-tit">Título após o reajuste</label><input type="text" id="r-tit"></div>
+  </div>
+  <div class="tablebox" style="margin-top:14px"><table class="ptable"><thead><tr><th>Família</th><th>Reajuste (%)</th><th>Itens</th><th>Exemplo</th><th>Antes (ICMS 18%)</th><th>Depois</th></tr></thead><tbody id="r-body"></tbody></table></div>
+  <div class="toolbar" style="margin-top:12px"><button type="button" class="btn primary" id="btn-reaj">Aplicar reajuste</button><span class="count" id="r-sum"></span></div>
+</section>
+
+
+
+<section class="card" data-panel="historico" hidden>
+  <h2>Histórico de revisões</h2>
+  <ul class="hist" id="hist"></ul>
+</section>
+<div class="foot"><span>Os arquivos ficam na pasta <b>data/</b> do repositório: produtos.json e config.json.</span><a href="index.html">Tabela de preço</a></div>
+</div>
+<script src="assets/common.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>
