@@ -1,12 +1,12 @@
 {
   "titulo": "Tabela de Preço Nacional 2026",
   "revisao": "Rev. 01",
-  "vigencia": "2026-10-30",
+  "vigencia": "2026-04-01",
   "empresa": "NMC GART",
   "observacao": "Pedido mínimo: R$ 1.000,00.",
   "historico": [
     {
-      "data": "2026-10-30",
+      "data": "2026-04-01",
       "revisao": "Rev. 01",
       "descricao": "Publicação inicial a partir do Formulário de Orçamento 2026 e da planilha de coloridos.",
       "percentuais": {}
