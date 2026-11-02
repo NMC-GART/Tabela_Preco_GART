@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tabela de Preço GART</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap">
+<style>
+[hidden]{display:none!important}
+
+:root{
+  /* Identidade GART (mesma do Formulário de Cadastro de Cliente): laranja #FF671F, petróleo #005A69, Raleway */
+  color-scheme:light;
+  --orange:#FF671F; --orange-dark:#e0551a; --petrol:#005A69; --petrol-dark:#00434e;
+  --paper:#f7f7f6; --surface:#ffffff; --ink:#231F20; --muted:#6b6668; --line:#e3e1df; --line2:#efedeb;
+  --accent:#005A69; --accent-soft:#E0EEF0; --warn:#e0551a; --warn-soft:#FFF0E8; --band:#F2F6F6;
+  --head:#005A69; --onhead:#ffffff;
+  --fd:"Raleway",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; --fb:"Raleway",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.45 var(--fb);padding:0 16px 48px;font-variant-numeric:tabular-nums}
+.wrap{max-width:1480px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;margin-top:16px;padding:22px 24px 18px;border-radius:10px;background:linear-gradient(160deg,var(--petrol) 0%,var(--petrol-dark) 100%);color:#fff;border-bottom:4px solid var(--orange)}
+.brand{font:800 15px var(--fb);letter-spacing:.12em;color:#fff;margin-bottom:6px}
+.brand span{color:var(--orange)}
+h1{font:800 clamp(22px,3.4vw,30px)/1.1 var(--fd);letter-spacing:.03em;text-transform:uppercase;margin:0;text-wrap:balance;color:#fff}
+.sub{color:#cfeaef;font-size:13px;margin-top:8px}
+.rev{font:700 12px var(--fd);letter-spacing:.08em;text-transform:uppercase;color:#cfeaef}
+.rev a{color:#fff}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:14px 12px;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.row{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end}
+.field{display:grid;gap:5px}
+.lbl{font:600 11px var(--fd);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lbl b{color:var(--warn)}
+.seg{display:inline-flex;border:1.5px solid var(--petrol);border-radius:6px;overflow:hidden}
+.seg button{font:600 15px var(--fd);letter-spacing:.02em;padding:8px 18px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--petrol)}
+.seg button[aria-pressed="true"]{background:var(--petrol);color:#fff}
+select,input[type=search]{font:500 15px var(--fb);color:var(--ink);background:var(--surface);border:1px solid #cfccc9;border-radius:6px;padding:8px 10px;min-height:40px}
+select{min-width:190px}
+input[type=search]{width:min(280px,100%)}
+.need select,.need .seg{outline:2px dashed var(--warn);outline-offset:3px}
+:focus-visible{outline:2px solid var(--orange)!important;outline-offset:2px}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 12.5px var(--fd);letter-spacing:.03em;padding:4px 10px;border-radius:999px;background:var(--band);color:var(--ink);border:1px solid var(--line)}
+.chip.ok{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.fams{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.fams button{flex:none;font:500 13px var(--fb);padding:5px 11px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fams button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
+.filters select{min-width:0;width:auto;max-width:200px;font-size:14px;min-height:36px;padding:6px 8px;border-width:1px;border-color:var(--line)}
+.filters select.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.clear{font:600 13px var(--fd);letter-spacing:.03em;padding:8px 12px;border-radius:6px;border:1px solid var(--warn);background:transparent;color:var(--warn);cursor:pointer;min-height:36px}
+.count{font-size:13px;color:var(--muted);align-self:center;margin-left:auto}
+thead tr.grp th.dims,thead th.dims{background:#0b6b7b}
+td.lin{white-space:nowrap;font-size:13px}
+td.dim{color:var(--ink);background:var(--band)}
+tr.p:hover td.dim{background:var(--accent-soft)}
+tr.nm td{border-top:1px solid var(--line)}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid rgba(0,0,0,.25);vertical-align:-1px;margin-right:6px}
+td.cor{white-space:nowrap;font-size:13px}
+.ean{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+.flag{color:var(--warn);font-weight:700;margin-left:3px;cursor:help}
+.gate{margin-top:28px;border:1.5px dashed var(--warn);background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:22px 24px;max-width:640px}
+.gate h2{font:700 20px var(--fd);margin:0 0 6px;color:var(--warn)}
+.gate p{margin:0;color:var(--ink)}
+.tablebox{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13.5px}
+thead th{background:var(--head);color:var(--onhead);font:600 12px var(--fd);letter-spacing:.06em;text-transform:uppercase;padding:8px 9px;text-align:left;white-space:nowrap;position:sticky;top:0}
+thead tr.grp th{font-size:11px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.12)}
+thead tr.grp th.money{background:var(--petrol-dark);color:#fff;border-bottom:2px solid var(--orange)}
+th.num,td.num{text-align:right}
+th.c,td.c{text-align:center}
+tbody td{padding:7px 9px;border-bottom:1px solid var(--line2);vertical-align:top}
+tbody tr.fam td{background:var(--band);font:700 13.5px var(--fd);letter-spacing:.05em;text-transform:uppercase;color:var(--petrol);padding:9px 10px;border-bottom:2px solid var(--orange)}
+tbody tr.fam td span{font:500 12px var(--fb);text-transform:none;letter-spacing:0;color:var(--muted);margin-left:8px}
+tbody tr.p:hover td{background:var(--accent-soft)}
+td.mod{font-weight:600;white-space:nowrap;position:sticky;left:0;background:var(--surface)}
+tr.p:hover td.mod{background:var(--accent-soft)}
+td.cod{color:var(--muted);font-size:12.5px;white-space:nowrap}
+td.small,div.small{color:var(--muted);font-size:12.5px}
+td.tax{color:var(--muted);white-space:nowrap}
+td.money{white-space:nowrap}
+td.strong{font-weight:600;color:var(--accent)}
+td.sep{border-left:1px solid var(--line)}
+.u{font-size:11px;color:var(--muted);margin-left:2px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.notes{margin-top:26px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.notes section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.notes h3{font:700 15px var(--fd);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+.notes ul{margin:0;padding-left:18px;color:var(--ink);font-size:13.5px;display:grid;gap:5px}
+.notes .muted{color:var(--muted)}
+@media (max-width:640px){.filters .field{flex:1 1 45%}.filters select{max-width:none;width:100%}.count{margin-left:0}.seg button{padding:8px 14px}select{min-width:0;width:100%}.field.uf{flex:1 1 140px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:600 13.5px var(--fd);letter-spacing:.03em;padding:8px 14px;border-radius:6px;border:1.5px solid var(--petrol);background:var(--surface);color:var(--petrol);cursor:pointer;min-height:38px;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:var(--petrol);border-color:var(--petrol);color:#fff}
+.btn.accent{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.colpanel{position:relative}
+.colpanel .menu{position:absolute;left:0;top:calc(100% + 6px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:14px 16px;width:min(340px,86vw);display:grid;gap:10px}
+.menu h4{margin:0;font:700 12px var(--fd);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.menu .presets{display:flex;flex-wrap:wrap;gap:6px}
+.menu .presets button{font:500 12.5px var(--fb);padding:4px 9px;border-radius:5px;border:1px solid var(--line);background:var(--band);color:var(--ink);cursor:pointer}
+.menu .cols{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:13.5px}
+.menu label{display:flex;gap:7px;align-items:center;cursor:pointer}
+.tabsel select{min-width:220px}
+.banner{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--warn-soft);color:var(--ink);border:1px solid var(--warn);font-size:14px}
+.banner b{color:var(--warn)}
+.foot{margin-top:22px;color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+.foot a{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:8px;font-size:14px;z-index:50}
+
+.notes h3{color:var(--petrol);border-bottom:2px solid var(--orange);padding-bottom:6px}
+select:focus,input:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+
+/* ---- painéis (admin / especiais) ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-top:18px}
+.card h2{font:700 15px var(--fd);margin:0 0 8px;letter-spacing:.05em;text-transform:uppercase;color:var(--petrol);border-bottom:2px solid var(--orange);padding-bottom:8px}
+.card p.help{margin:0 0 14px;color:var(--muted);font-size:13.5px;max-width:80ch}
+.grid{display:grid;gap:12px 16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid .wide{grid-column:1/-1}
+input[type=text],input[type=password],input[type=date],input[type=number],textarea{font:500 15px var(--fb);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;min-height:40px;width:100%}
+textarea{min-height:64px;resize:vertical}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;border-bottom:2px solid var(--petrol)}
+.tabs button{font:600 14px var(--fd);letter-spacing:.03em;padding:9px 16px;border:1px solid var(--line);border-bottom:0;border-radius:6px 6px 0 0;background:var(--surface);color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+.ptable{border-collapse:collapse;width:100%;min-width:0;font-size:14px}
+.ptable th{background:var(--head);color:var(--onhead);font:600 12px var(--fd);letter-spacing:.06em;text-transform:uppercase;padding:7px 9px;text-align:left;position:static}
+.ptable td{padding:6px 9px;border-bottom:1px solid var(--line2)}
+.ptable input{width:110px;min-height:34px;text-align:right}
+.up{color:#B42318;font-weight:600}.down{color:var(--accent);font-weight:600}
+.status{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+.dot{width:10px;height:10px;border-radius:50%;background:#B42318;display:inline-block}
+.dot.on{background:#1F9D55}
+.pending{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:10px 14px;margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.esp-list{display:grid;gap:8px}
+.esp-item{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.esp-item .t{font-weight:600}
+.esp-item .m{color:var(--muted);font-size:13px}
+.linkbox{font-size:12.5px;color:var(--muted);word-break:break-all}
+.hist li{margin-bottom:6px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="brand">GART<span>.</span></div>
+    <h1 id="titulo">Tabela de Preço</h1>
+    <div class="sub" id="subtitulo">NMC GART · preço por unidade de venda e por metro linear, com IPI e ST da UF de destino · coloridos por cor, com código e EAN</div>
+  </div>
+  <div class="rev" id="rev"></div>
+</header>
+
+<div class="controls" id="controls">
+  <div class="row">
+    <div class="field tabsel" id="f-tab" hidden>
+      <label class="lbl" for="tabela">Tabela</label>
+      <select id="tabela"><option value="">Tabela oficial</option></select>
+    </div>
+    <div class="field" id="f-canal">
+      <span class="lbl">Canal <b>*</b></span>
+      <div class="seg" role="group" aria-label="Canal">
+        <button type="button" id="c-rev" data-canal="Revenda" aria-pressed="false">Revenda</button>
+        <button type="button" id="c-con" data-canal="Construtora" aria-pressed="false">Construtora</button>
+      </div>
+    </div>
+    <div class="field uf" id="f-uf">
+      <label class="lbl" for="uf">UF de destino <b>*</b></label>
+      <select id="uf"><option value="">Selecione…</option></select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="q">Buscar</label>
+      <input type="search" id="q" placeholder="Modelo, código, EAN ou cor">
+    </div>
+    <div class="facts" id="facts"></div>
+  </div>
+  <div class="filters" id="filters" hidden>
+    <div class="field"><label class="lbl" for="fl-familia">Família</label><select id="fl-familia"></select></div>
+    <div class="field"><label class="lbl" for="fl-modelo">Modelo</label><select id="fl-modelo"></select></div>
+    <div class="field"><label class="lbl" for="fl-cor">Cor</label><select id="fl-cor"></select></div>
+    <div class="field"><label class="lbl" for="fl-codigo">Código</label><select id="fl-codigo"></select></div>
+    <div class="field"><label class="lbl" for="fl-esp">Espessura</label><select id="fl-esp"></select></div>
+    <div class="field"><label class="lbl" for="fl-alt">Altura</label><select id="fl-alt"></select></div>
+    <div class="field"><label class="lbl" for="fl-comp">Comprimento</label><select id="fl-comp"></select></div>
+    <button type="button" class="clear" id="clear">Limpar filtros</button>
+  </div>
+  <div class="toolbar" id="toolbar" hidden>
+    <div class="colpanel">
+      <button type="button" class="btn" id="btn-cols" aria-expanded="false">Colunas ▾</button>
+      <div class="menu" id="colmenu" hidden>
+        <h4>Modelos prontos</h4>
+        <div class="presets" id="presets"></div>
+        <h4>Escolha as colunas</h4>
+        <div class="cols" id="cols"></div>
+      </div>
+    </div>
+    <button type="button" class="btn accent" id="btn-xlsx">Baixar Excel</button>
+    <button type="button" class="btn primary" id="btn-pdf">Baixar PDF</button>
+    <span class="count" id="count"></span>
+  </div>
+</div>
+
+<div class="banner" id="banner" hidden></div>
+
+<div class="gate" id="gate">
+  <h2>Escolha o canal e a UF</h2>
+  <p>Os dois campos são obrigatórios. A lista de produtos muda com o canal (Revenda e Construtora têm tabelas diferentes) e o preço muda com a UF: coluna de ICMS, ST por categoria e desconto Suframa no AM.</p>
+</div>
+
+<div class="tablebox" id="tablebox" hidden>
+  <table>
+    <thead id="th"></thead>
+    <tbody id="tb"></tbody>
+  </table>
+</div>
+
+<div class="notes">
+  <section>
+    <h3>Como o preço é calculado</h3>
+    <ul>
+      <li><b>Revenda:</b> a UF define a coluna de preço (ICMS 18%, 12% ou 7%). No AM aplica-se o desconto Suframa (fator 0,9075).</li>
+      <li><b>Construtora:</b> preço único com ICMS cheio de 18% incluso, sem DIFAL à parte e sem ST, igual em todas as UFs.</li>
+      <li><b>Preço c/ impostos</b> = preço tabela + IPI + ST.</li>
+      <li><b>Preço por m</b> = preço ÷ metros da unidade de venda (kit de 2 peças = 4 m; peça de 2,44 m; quadro de boiserie pelo perímetro). Painéis Canelé em R$/m².</li>
+      <li><b>Coloridos:</b> todas as cores de um modelo têm o mesmo preço; muda o código da cor e o EAN. Amostras de cor aproximadas.</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Informações</h3>
+    <ul id="info"></ul>
+  </section>
+</div>
+<div class="foot"><span style="opacity:.6">site v5 · 02/11/2026</span><span id="foot-l"></span><a href="admin.html">Administração</a></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';document.head.appendChild(s)"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+/* Tabela de Preço NMC GART — lógica compartilhada (consulta e administração) */
+const GART = (() => {
+  const UFN = {AC:"Acre",AL:"Alagoas",AP:"Amapá",AM:"Amazonas",BA:"Bahia",CE:"Ceará",DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MT:"Mato Grosso",MS:"Mato Grosso do Sul",MG:"Minas Gerais",PA:"Pará",PB:"Paraíba",PR:"Paraná",PE:"Pernambuco",PI:"Piauí",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",RS:"Rio Grande do Sul",RO:"Rondônia",RR:"Roraima",SC:"Santa Catarina",SP:"São Paulo",SE:"Sergipe",TO:"Tocantins"};
+  const SW = {"002":"#B8A29C","003":"#1F1F1F","005":"#D9CBA6","009":"#A4A7A9","010":"#5B5F63","011":"#3C3F43","012":"#BBA98E","014":"#F5F5F1"};
+
+  async function getJSON(path) {
+    const r = await fetch(path + "?v=" + Date.now(), {cache: "no-store"});
+    if (!r.ok) throw new Error("Não foi possível carregar " + path);
+    return r.json();
+  }
+  function rowsOf(prod) {
+    return prod.linhas.map(a => Object.fromEntries(prod.campos.map((k, i) => [k, a[i]])));
+  }
+  async function load() {
+    if (window.GART_DATA) { const {prod, cfg} = window.GART_DATA; return {prod, cfg, rows: rowsOf(prod)}; }  // versão de prévia (arquivo único)
+    const [prod, cfg] = await Promise.all([getJSON("produtos.json"), getJSON("config.json")]);
+    return {prod, cfg, rows: rowsOf(prod)};
+  }
+
+  /* Preço — mesma regra do Formulário de Orçamento 2026:
+     Revenda: coluna de preço pelo ICMS da UF; AM = × fator Suframa; IPI e ST sobre o preço (já com desconto, se houver).
+     Construtora: preço único (ICMS 18% incluso), sem ST. */
+  function price(x, ctx) {
+    const {canal, uf, prod, desconto} = ctx;
+    const t = prod.ufs[uf];
+    const icms = canal === "Construtora" ? 0.18 : t.icms;
+    const cheio = icms === 0.18 ? x.p18 : icms === 0.12 ? x.p12 : x.p7;
+    const d = desconto ? (desconto(x) || 0) : 0;
+    const base = cheio * (1 - d / 100);
+    const suf = canal === "Revenda" && uf === "AM";
+    const st = canal === "Construtora" ? 0 : (t[x.st_cat] || 0);
+    const tab = suf ? base * prod.suframa : base;
+    const com = tab + base * (x.ipi + st);
+    return {icms, st, cheio, desc: d, tab, com, m: x.med_qtd ? tab / x.med_qtd : null, mc: x.med_qtd ? com / x.med_qtd : null};
+  }
+  function descontoFn(tabela) {
+    if (!tabela) return null;
+    return x => {
+      const f = tabela.descontos && tabela.descontos[x.familia];
+      return (f !== undefined && f !== null && f !== "") ? Number(f) : Number(tabela.desconto_geral || 0);
+    };
+  }
+
+  const brl = v => v == null ? "" : v.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
+  const pct = v => v ? (v * 100).toLocaleString("pt-BR", {maximumFractionDigits: 2}) + "%" : "–";
+  const mm = v => v == null ? "–" : Number(v).toLocaleString("pt-BR");
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const dataBR = iso => { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}/${m}/${y}`; };
+
+  /* Colunas disponíveis (o usuário escolhe quais aparecem; o export segue a mesma escolha) */
+  const COLS = [
+    {k: "modelo", t: "Modelo", fixo: true},
+    {k: "cor", t: "Cor"},
+    {k: "codigo", t: "Código"},
+    {k: "ean", t: "EAN"},
+    {k: "linha", t: "Descrição"},
+    {k: "esp", t: "Espessura (mm)", num: true},
+    {k: "alt", t: "Altura (mm)", num: true},
+    {k: "comp", t: "Comprimento (mm)", num: true},
+    {k: "unidade", t: "Unidade de venda"},
+    {k: "embalagem", t: "Embalagem (cx)"},
+    {k: "ipi", t: "IPI", imp: true},
+    {k: "st", t: "ST", imp: true},
+    {k: "tab", t: "Preço tabela (unid.)", money: true},
+    {k: "com", t: "Preço c/ impostos (unid.)", money: true, imp: true},
+    {k: "m", t: "Preço tabela (por m)", money: true, metro: true},
+    {k: "mc", t: "Preço c/ impostos (por m)", money: true, imp: true, metro: true},
+  ];
+  const PRESETS = {
+    "Completa": COLS.map(c => c.k),
+    "Sem impostos": COLS.filter(c => !c.imp).map(c => c.k),
+    "Com EAN": ["modelo", "cor", "codigo", "ean", "linha", "unidade", "embalagem", "tab", "com"],
+    "Compacta": ["modelo", "cor", "codigo", "linha", "unidade", "tab", "com"],
+  };
+  /* valor "cru" de uma coluna, usado no Excel/PDF */
+  function value(x, p, k) {
+    switch (k) {
+      case "ipi": return x.ipi;
+      case "st": return p.st;
+      case "tab": return p.tab;
+      case "com": return p.com;
+      case "m": return p.m;
+      case "mc": return p.mc;
+      case "unidade": return x.unidade + (x.composicao ? ` (${x.composicao})` : "");
+      default: return x[k] ?? "";
+    }
+  }
+  function slug(s) {
+    return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+  }
+  function toast(msg) {
+    const el = document.createElement("div"); el.className = "toast"; el.textContent = msg;
+    document.body.appendChild(el); setTimeout(() => el.remove(), 3200);
+  }
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
+  return {UFN, SW, load, getJSON, rowsOf, price, descontoFn, brl, pct, mm, esc, dataBR, COLS, PRESETS, value, slug, toast, store};
+})();
+
+</script>
+<script>
+/* Tabela de Preço NMC GART — página de consulta (tabela oficial) e visualização das tabelas especiais.
+   Na página pública (index.html) não há tabelas especiais: elas só aparecem em especiais.html, após login. */
+window.GART_APP = async (opts = {}) => {
+  const G = GART, $ = id => document.getElementById(id);
+  let D;
+  try { D = await G.load(); }
+  catch (e) { document.querySelector(".wrap").insertAdjacentHTML("beforeend", `<div class="banner"><b>Erro:</b> ${G.esc(e.message)}. Abra a página pelo endereço publicado (GitHub Pages), não direto do computador.</div>`); return; }
+  const {prod, cfg, rows} = D;
+  const esp = {tabelas: opts.tabelas || []};
+  const FK = ["familia", "modelo", "cor", "codigo", "esp", "alt", "comp"];
+  const params = new URLSearchParams(location.search);
+  const st = {canal: "", uf: "", q: "", tab: params.get("tabela") || "", f: Object.fromEntries(FK.map(k => [k, ""])),
+              cols: G.store.get("gart.cols", G.PRESETS["Completa"])};
+
+  /* ---------- cabeçalho / textos ---------- */
+  function header() {
+    const t = currentTab();
+    $("titulo").textContent = t ? t.titulo : cfg.titulo;
+    document.title = (t ? t.titulo : cfg.titulo) + " · " + cfg.revisao;
+    $("rev").textContent = `${cfg.revisao} · vigência ${G.dataBR(cfg.vigencia)}`;
+    $("subtitulo").textContent = t
+      ? `Baseada na ${cfg.titulo} (${cfg.revisao}) ${t.cliente ? " · " + t.cliente : ""}`
+      : `${cfg.empresa || "NMC GART"} · preço por unidade de venda e por metro linear, com IPI e ST da UF de destino · coloridos por cor, com código e EAN`;
+    const info = [cfg.observacao, `Atualizada em ${G.dataBR(prod.versao)}.`].filter(Boolean);
+    if (t && t.observacao) info.unshift(t.observacao);
+    if (t && t.validade) info.unshift(`Condição válida até ${G.dataBR(t.validade)}.`);
+    $("info").innerHTML = info.map(i => `<li>${G.esc(i)}</li>`).join("");
+    $("foot-l").textContent = `${cfg.titulo} · ${cfg.revisao}`;
+    const b = $("banner");
+    if (t) {
+      const fams = Object.entries(t.descontos || {}).filter(([, v]) => Number(v)).map(([f, v]) => `${f} ${String(v).replace(".", ",")}%`);
+      const geral = Number(t.desconto_geral || 0);
+      b.innerHTML = `<b>${G.esc(t.titulo)}</b> — desconto ${geral ? `geral de ${String(geral).replace(".", ",")}%` : ""}${geral && fams.length ? "; " : ""}${fams.length ? "por família: " + G.esc(fams.join(", ")) : ""}${!geral && !fams.length ? "não definido" : ""}. Preços já com desconto; IPI e ST calculados sobre o preço com desconto.`;
+      b.hidden = false;
+    } else b.hidden = true;
+  }
+  const currentTab = () => (esp.tabelas || []).find(t => t.id === st.tab) || null;
+  function fillTabs() {
+    const sel = $("tabela"); sel.innerHTML = `<option value="">Tabela oficial</option>`;
+    (esp.tabelas || []).forEach(t => { const o = document.createElement("option"); o.value = t.id; o.textContent = t.titulo + (t.criado_por_nome || t.criado_por ? ` (${t.criado_por_nome || t.criado_por})` : ""); sel.appendChild(o); });
+    if (!currentTab()) st.tab = "";
+    sel.value = st.tab;
+    $("f-tab").hidden = !(esp.tabelas || []).length;
+  }
+  fillTabs();
+  Object.keys(prod.ufs).sort().forEach(u => { const o = document.createElement("option"); o.value = u; o.textContent = `${u} · ${G.UFN[u] || ""}`; $("uf").appendChild(o); });
+
+  /* ---------- eventos ---------- */
+  const clearF = () => FK.forEach(k => st.f[k] = "");
+  document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { if (st.canal !== b.dataset.canal) { st.canal = b.dataset.canal; clearF(); } render(); }));
+  $("uf").addEventListener("change", e => { st.uf = e.target.value; render(); });
+  $("tabela").addEventListener("change", e => {
+    st.tab = e.target.value;
+    const u = new URL(location.href); if (st.tab) u.searchParams.set("tabela", st.tab); else u.searchParams.delete("tabela");
+    history.replaceState(null, "", u); header(); render();
+  });
+  $("q").addEventListener("input", e => { st.q = e.target.value.trim().toLowerCase(); render(); });
+  FK.forEach(k => $("fl-" + k).addEventListener("change", e => { st.f[k] = e.target.value; render(); }));
+  $("clear").addEventListener("click", () => { clearF(); st.q = ""; $("q").value = ""; render(); });
+
+  /* ---------- colunas ---------- */
+  function colMenu() {
+    $("presets").innerHTML = Object.keys(G.PRESETS).map(n => `<button type="button" data-p="${n}">${n}</button>`).join("");
+    $("cols").innerHTML = G.COLS.map(c => `<label><input type="checkbox" data-k="${c.k}" ${st.cols.includes(c.k) ? "checked" : ""} ${c.fixo ? "disabled" : ""}> ${c.t}</label>`).join("");
+  }
+  $("btn-cols").addEventListener("click", e => {
+    const m = $("colmenu"); m.hidden = !m.hidden; $("btn-cols").setAttribute("aria-expanded", String(!m.hidden)); e.stopPropagation();
+  });
+  const closeMenu = () => { $("colmenu").hidden = true; $("btn-cols").setAttribute("aria-expanded", "false"); };
+  $("colmenu").addEventListener("click", e => e.stopPropagation());
+  document.addEventListener("click", () => { if (!$("colmenu").hidden) closeMenu(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("colmenu").hidden) closeMenu(); });
+  $("presets").addEventListener("click", e => { const p = e.target.dataset.p; if (!p) return; st.cols = [...G.PRESETS[p]]; G.store.set("gart.cols", st.cols); colMenu(); render(); });
+  $("cols").addEventListener("change", e => {
+    const k = e.target.dataset.k; if (!k) return;
+    st.cols = G.COLS.map(c => c.k).filter(c => c === "modelo" || (c === k ? e.target.checked : st.cols.includes(c)));
+    G.store.set("gart.cols", st.cols); render();
+  });
+  const activeCols = () => G.COLS.filter(c => c.fixo || st.cols.includes(c.k));
+
+  /* ---------- filtros ---------- */
+  const key = (x, k) => x[k] == null || x[k] === "" ? "__vazio" : String(x[k]);
+  const passQ = x => !st.q || [x.modelo, x.codigo, x.linha, x.ean, x.cor].join(" ").toLowerCase().includes(st.q);
+  const pass = (x, skip) => FK.every(k => k === skip || !st.f[k] || key(x, k) === st.f[k]) && passQ(x);
+  function fillFilters(list) {
+    for (const k of FK) {
+      const sel = $("fl-" + k), opts = new Map();
+      list.filter(x => pass(x, k)).forEach(x => { const v = key(x, k); opts.set(v, (opts.get(v) || 0) + 1); });
+      let vals = [...opts.keys()];
+      const num = ["esp", "alt", "comp"].includes(k);
+      if (k === "familia") vals.sort((a, b) => prod.familias.indexOf(a) - prod.familias.indexOf(b));
+      else if (num) vals.sort((a, b) => (a === "__vazio") - (b === "__vazio") || Number(a) - Number(b));
+      else vals.sort((a, b) => a.localeCompare(b, "pt-BR", {numeric: true}));
+      if (st.f[k] && !opts.has(st.f[k])) vals.unshift(st.f[k]);
+      const lab = v => v === "__vazio" ? (k === "cor" ? "(sem cor)" : "(sem medida)") : (num ? Number(v).toLocaleString("pt-BR") + " mm" : v);
+      sel.innerHTML = `<option value="">Todos</option>` + vals.map(v => `<option value="${G.esc(v)}"${v === st.f[k] ? " selected" : ""}>${G.esc(lab(v))} (${opts.get(v) || 0})</option>`).join("");
+      sel.classList.toggle("on", !!st.f[k]);
+    }
+  }
+  const ctx = () => ({canal: st.canal, uf: st.uf, prod, desconto: G.descontoFn(currentTab())});
+  const visible = () => rows.filter(x => x.canal === st.canal).filter(x => pass(x, null));
+
+  /* ---------- tabela ---------- */
+  function cell(c, x, p) {
+    const u = x.med_un || "m";
+    switch (c.k) {
+      case "modelo": return `<td class="mod">${G.esc(x.modelo)}</td>`;
+      case "cor": return `<td class="cor">${x.cor ? (x.cor_cod ? `<span class="sw" style="background:${G.SW[x.cor_cod] || "transparent"}" title="tom aproximado"></span>` : "") + G.esc(x.cor) : `<span class="small">–</span>`}</td>`;
+      case "codigo": { const fl = [x.cod_obs, x.ean_obs].filter(Boolean).join(" · "); return `<td class="cod">${G.esc(x.codigo)}${fl ? `<span class="flag" title="${G.esc(fl)}">!</span>` : ""}</td>`; }
+      case "ean": return `<td class="cod">${G.esc(x.ean) || "–"}</td>`;
+      case "linha": return `<td class="lin">${G.esc(x.linha)}</td>`;
+      case "esp": case "alt": case "comp": return `<td class="num dim">${G.mm(x[c.k])}</td>`;
+      case "unidade": return `<td>${G.esc(x.unidade)}${x.composicao ? `<div class="small">${G.esc(x.composicao)}</div>` : ""}</td>`;
+      case "embalagem": return `<td class="small">${G.esc(x.embalagem)}</td>`;
+      case "ipi": return `<td class="c tax">${G.pct(x.ipi)}</td>`;
+      case "st": return `<td class="c tax">${G.pct(p.st)}</td>`;
+      case "tab": return `<td class="num money sep">${G.brl(p.tab)}</td>`;
+      case "com": return `<td class="num money strong">${G.brl(p.com)}</td>`;
+      case "m": return p.m == null ? `<td class="num money sep small">–</td>` : `<td class="num money sep">${G.brl(p.m)}<span class="u">/${u}</span></td>`;
+      case "mc": return p.mc == null ? `<td class="num money small">–</td>` : `<td class="num money strong">${G.brl(p.mc)}<span class="u">/${u}</span></td>`;
+    }
+  }
+  function head(cols) {
+    const grp = [["Produto", c => ["modelo", "cor", "codigo", "ean", "linha"].includes(c.k), ""], ["Medidas (mm)", c => ["esp", "alt", "comp"].includes(c.k), "c dims"],
+                 ["Venda", c => ["unidade", "embalagem"].includes(c.k), ""], ["Impostos", c => ["ipi", "st"].includes(c.k), "c"],
+                 ["Por unidade de venda", c => ["tab", "com"].includes(c.k), "c money"], ["Por metro linear", c => ["m", "mc"].includes(c.k), "c money"]];
+    let g = "";
+    for (const [t, f, cls] of grp) { const n = cols.filter(f).length; if (n) g += `<th colspan="${n}" class="${cls}">${t}</th>`; }
+    const short = {esp: "Espessura", alt: "Altura", comp: "Compr.", tab: "Preço tabela", com: "C/ impostos", m: "Preço tabela", mc: "C/ impostos", linha: "Descrição"};
+    const r2 = cols.map(c => `<th class="${c.num || c.money ? "num" : ""}${["esp", "alt", "comp"].includes(c.k) ? " dims" : ""}${["ipi", "st"].includes(c.k) ? " c" : ""}">${short[c.k] || c.t}</th>`).join("");
+    return `<tr class="grp">${g}</tr><tr>${r2}</tr>`;
+  }
+  function render() {
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.canal === st.canal));
+    $("f-canal").classList.toggle("need", !st.canal);
+    $("f-uf").classList.toggle("need", !st.uf);
+    const ready = st.canal && st.uf;
+    $("gate").hidden = !!ready; $("tablebox").hidden = !ready; $("filters").hidden = !ready; $("toolbar").hidden = !ready;
+    const facts = $("facts"); facts.innerHTML = "";
+    if (!ready) return;
+    const t = prod.ufs[st.uf];
+    const chips = st.canal === "Revenda"
+      ? [["ok", `Coluna ICMS ${Math.round(t.icms * 100)}%`], [t.st_padrao ? "warn" : "", t.st_padrao ? `ST padrão ${G.pct(t.st_padrao)}` : "Sem ST padrão na UF"], ...(st.uf === "AM" ? [["ok", "Suframa −9,25%"]] : [])]
+      : [["ok", "ICMS cheio 18% incluso · sem DIFAL"], ["", "Sem ST · preço nacional"]];
+    facts.innerHTML = chips.map(([c, x]) => `<span class="chip ${c}">${x}</span>`).join("");
+    const list = rows.filter(x => x.canal === st.canal);
+    fillFilters(list);
+    const vis = list.filter(x => pass(x, null));
+    const active = FK.some(k => st.f[k]) || st.q;
+    $("count").textContent = active ? `${vis.length} de ${list.length} itens` : `${list.length} itens`;
+    $("clear").hidden = !active;
+    const cols = activeCols(), C = ctx();
+    $("th").innerHTML = head(cols);
+    let h = "", cur = "", prevMod = "";
+    const counts = {}; vis.forEach(x => counts[x.familia] = (counts[x.familia] || 0) + 1);
+    for (const x of vis) {
+      if (x.familia !== cur) { cur = x.familia; prevMod = ""; h += `<tr class="fam"><td colspan="${cols.length}">${G.esc(cur)}<span>${counts[cur]} itens</span></td></tr>`; }
+      const nm = prevMod && x.modelo !== prevMod ? " nm" : ""; prevMod = x.modelo;
+      const p = G.price(x, C);
+      h += `<tr class="p${nm}">` + cols.map(c => cell(c, x, p)).join("") + `</tr>`;
+    }
+    $("tb").innerHTML = h || `<tr><td colspan="${cols.length}" class="empty">Nenhum produto com esses filtros. Use “Limpar filtros”.</td></tr>`;
+  }
+
+  /* ---------- exportação ---------- */
+  function exportData() {
+    const cols = activeCols(), C = ctx(), tab = currentTab();
+    const titulo = tab ? tab.titulo : cfg.titulo;
+    const linha2 = `${cfg.revisao} · vigência ${G.dataBR(cfg.vigencia)} · Canal: ${st.canal} · UF: ${st.uf}${st.canal === "Revenda" ? ` (ICMS ${Math.round(prod.ufs[st.uf].icms * 100)}%)` : " (ICMS 18% incluso)"}`;
+    const filtros = FK.filter(k => st.f[k]).map(k => `${k}: ${st.f[k] === "__vazio" ? "vazio" : st.f[k]}`).concat(st.q ? [`busca: ${st.q}`] : []);
+    const vis = visible();
+    return {cols, titulo, linha2, filtros, data: vis.map(x => { const p = G.price(x, C); return {x, p, v: cols.map(c => G.value(x, p, c.k))}; })};
+  }
+  const fileName = ext => `${G.slug(currentTab() ? currentTab().titulo : cfg.titulo)}-${G.slug(cfg.revisao)}-${st.canal.toLowerCase()}-${st.uf}.${ext}`;
+
+  /* Excel no padrão visual GART, pronto para imprimir (ExcelJS) */
+  $("btn-xlsx").addEventListener("click", async () => {
+    if (!window.ExcelJS) return G.toast("Não foi possível carregar o gerador de Excel. Verifique a internet.");
+    const btn = $("btn-xlsx"); btn.disabled = true;
+    try {
+      const E = exportData(), tab = currentTab(), N = E.cols.length;
+      const PE = "FF005A69", PE_DK = "FF00434E", OR = "FFFF671F", INK = "FF231F20", SL = "FF6B6668", LINE = "FFE3E1DF", PAPER = "FFF7F7F6", FAM = "FFE0EEF0";
+      const F = (color, size = 9, bold = false, extra = {}) => ({name: "Arial", size, bold, color: {argb: color}, ...extra});
+      const fill = c => ({type: "pattern", pattern: "solid", fgColor: {argb: c}});
+      const wb = new ExcelJS.Workbook(); wb.creator = cfg.empresa || "NMC GART"; wb.created = new Date();
+      const ws = wb.addWorksheet("Tabela de Preço", {views: [{state: "frozen", ySplit: 7, showGridLines: false}]});
+      const W = {modelo: 12, cor: 17, codigo: 14, ean: 16, linha: 26, esp: 10, alt: 9, comp: 12, unidade: 22, embalagem: 16, ipi: 7, st: 7, tab: 13, com: 14, m: 13, mc: 14};
+      ws.columns = E.cols.map(c => ({width: W[c.k] || 12}));
+      const band = (r, h, value, font, bg, align = "left") => {
+        ws.mergeCells(r, 1, r, N); const c = ws.getCell(r, 1); c.value = value; c.font = font;
+        c.alignment = {vertical: "middle", horizontal: align, indent: align === "left" ? 1 : 0}; ws.getRow(r).height = h;
+        for (let j = 1; j <= N; j++) ws.getCell(r, j).fill = fill(bg);
+      };
+      // cabeçalho: faixa petróleo com a marca, título e condições; filete laranja
+      band(1, 30, {richText: [{text: "GART", font: F("FFFFFFFF", 20, true)}, {text: ".", font: F(OR, 20, true)},
+                              {text: "    " + (cfg.empresa || "NMC GART"), font: F("FFCFEAEF", 9)}]}, F("FFFFFFFF", 20, true), PE);
+      band(2, 24, E.titulo.toUpperCase(), F("FFFFFFFF", 14, true), PE);
+      band(3, 18, E.linha2, F("FFCFEAEF", 9.5), PE);
+      band(4, 4, "", F(INK), OR);
+      const info = [];
+      if (tab) { if (tab.cliente) info.push("Cliente: " + tab.cliente); if (tab.validade) info.push("Condição válida até " + G.dataBR(tab.validade)); if (tab.observacao) info.push(tab.observacao); }
+      if (E.filtros.length) info.push("Filtros: " + E.filtros.join(" · "));
+      band(5, info.length ? 20 : 8, info.join("   ·   "), F(SL, 9, false, {italic: true}), "FFFFFFFF");
+      // títulos das colunas em dois níveis, como no site
+      const grp = [["Produto", ["modelo", "cor", "codigo", "ean", "linha"]], ["Medidas (mm)", ["esp", "alt", "comp"]], ["Venda", ["unidade", "embalagem"]],
+                   ["Impostos", ["ipi", "st"]], ["Por unidade de venda", ["tab", "com"]], ["Por metro linear", ["m", "mc"]]];
+      const short = {esp: "Espessura", alt: "Altura", comp: "Comprimento", tab: "Preço tabela", com: "C/ impostos", m: "Preço tabela", mc: "C/ impostos", linha: "Descrição", unidade: "Unidade de venda", embalagem: "Embalagem (cx)"};
+      const isGrpStart = new Set();
+      let j = 1;
+      for (const [t, ks] of grp) {
+        const n = E.cols.filter(c => ks.includes(c.k)).length; if (!n) continue;
+        isGrpStart.add(j);
+        if (n > 1) ws.mergeCells(6, j, 6, j + n - 1);
+        ws.getCell(6, j).value = t; j += n;
+      }
+      const hdrBorder = {left: {style: "thin", color: {argb: "FF2F7F8C"}}};
+      for (let k = 1; k <= N; k++) {
+        const g = ws.getCell(6, k), h = ws.getCell(7, k), c = E.cols[k - 1];
+        g.fill = fill(PE_DK); g.font = F("FFFFFFFF", 8.5, true); g.alignment = {horizontal: "center", vertical: "middle"};
+        h.value = short[c.k] || c.t; h.fill = fill(PE); h.font = F("FFFFFFFF", 9, true);
+        h.alignment = {horizontal: c.money || c.num || c.k === "ipi" || c.k === "st" ? "center" : "left", vertical: "middle", wrapText: true, indent: c.money || c.num ? 0 : 1};
+        if (isGrpStart.has(k) && k > 1) { g.border = hdrBorder; h.border = hdrBorder; }
+      }
+      ws.getRow(6).height = 16; ws.getRow(7).height = 28;
+      // linhas de produtos, agrupadas por família
+      const fmtMoney = '"R$" #,##0.00', thin = {style: "hair", color: {argb: "FFD5D2CF"}}, sep = {style: "thin", color: {argb: "FFB8D4D9"}};
+      let r = 8, cur = "", zebra = false;
+      const counts = {}; E.data.forEach(d => counts[d.x.familia] = (counts[d.x.familia] || 0) + 1);
+      for (const d of E.data) {
+        if (d.x.familia !== cur) {
+          cur = d.x.familia; zebra = false;
+          ws.mergeCells(r, 1, r, N);
+          const c = ws.getCell(r, 1);
+          c.value = {richText: [{text: cur.toUpperCase(), font: F(PE_DK, 10, true)}, {text: `   ${counts[cur]} itens`, font: F(SL, 8)}]};
+          c.alignment = {vertical: "middle", indent: 1}; c.fill = fill(FAM);
+          c.border = {top: {style: "thin", color: {argb: PE}}};
+          ws.getRow(r).height = 19; r++;
+        }
+        const row = ws.getRow(r); let lines = 1;
+        E.cols.forEach((col, i) => {
+          const c = row.getCell(i + 1); let v = d.v[i];
+          if (v === "" || v === undefined) v = null;
+          if (col.k === "ean" || col.k === "codigo") v = v == null ? null : String(v);
+          c.value = v ?? (col.money ? "–" : null);
+          c.font = F(INK, 9, col.k === "com" || col.k === "mc" || col.k === "modelo");
+          c.border = {bottom: thin, ...(isGrpStart.has(i + 1) && i > 0 ? {left: sep} : {})};
+          if (zebra) c.fill = fill(PAPER);
+          const al = {vertical: "middle"};
+          if (col.money) { al.horizontal = "right"; al.indent = 1; if (typeof v === "number") c.numFmt = col.metro ? `${fmtMoney}"/${d.x.med_un || "m"}"` : fmtMoney; else al.horizontal = "center"; }
+          else if (col.num) { al.horizontal = "center"; c.numFmt = "#,##0"; }
+          else if (col.k === "ipi" || col.k === "st") { al.horizontal = "center"; c.numFmt = "0.0%"; if (v === 0) { c.value = "–"; } }
+          else { al.horizontal = "left"; al.indent = 1; }
+          if (col.k === "linha" || col.k === "unidade" || col.k === "embalagem") {
+            al.wrapText = true; if (v) lines = Math.max(lines, Math.ceil(String(v).length * 1.05 / (W[col.k] - 2)));
+          }
+          if (col.k === "com" || col.k === "mc") c.font = F(PE_DK, 9, true);
+          c.alignment = al;
+        });
+        row.height = Math.max(16, 12.5 * lines + 3);
+        zebra = !zebra; r++;
+      }
+      // observações
+      r++;
+      const notes = ["Preço c/ impostos = preço tabela + IPI + ST." + (st.canal === "Construtora" ? " Construtora: ICMS 18% incluso, sem DIFAL e sem ST." : st.uf === "AM" ? " AM: desconto Suframa aplicado." : ""),
+                     cfg.observacao || "", `Gerada em ${new Date().toLocaleDateString("pt-BR")} · ${cfg.empresa || "NMC GART"} · ${cfg.titulo} · ${cfg.revisao}`].filter(Boolean);
+      for (const t of notes) { ws.mergeCells(r, 1, r, N); const c = ws.getCell(r, 1); c.value = t; c.font = F(SL, 8.5, false, {italic: true}); c.alignment = {indent: 1}; r++; }
+      ws.autoFilter = {from: {row: 7, column: 1}, to: {row: 7, column: N}};
+      // impressão: A4 paisagem, 1 página de largura, cabeçalho das colunas repetido em todas as páginas
+      const esc = t => String(t).replace(/&/g, "&&");
+      ws.pageSetup = {paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0, horizontalCentered: true,
+                      margins: {left: 0.35, right: 0.35, top: 0.45, bottom: 0.6, header: 0.2, footer: 0.3}, printTitlesRow: "6:7"};
+      ws.headerFooter.oddFooter = `&L&"Arial"&8&K6B6668${esc(cfg.empresa || "NMC GART")} · ${esc(E.titulo)} · ${esc(cfg.revisao)} · ${esc(st.canal)} · ${esc(st.uf)}&R&"Arial"&8&K6B6668Página &P de &N`;
+      const buf = await wb.xlsx.writeBuffer();
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([buf], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+      a.download = fileName("xlsx"); document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    } catch (e) { G.toast("Erro ao gerar o Excel: " + e.message); }
+    finally { btn.disabled = false; }
+  });
+
+  $("btn-pdf").addEventListener("click", () => {
+    if (!window.jspdf) return G.toast("Não foi possível carregar o gerador de PDF. Verifique a internet.");
+    const E = exportData();
+    const doc = new jspdf.jsPDF({orientation: "landscape", unit: "mm", format: "a4"});
+    const W = doc.internal.pageSize.getWidth();
+    // cabeçalho na identidade GART: faixa petróleo, marca "GART." com ponto laranja, filete laranja
+    const PETROL = [0, 90, 105], PETROL_DK = [0, 67, 78], ORANGE = [255, 103, 31];
+    doc.setFillColor(...PETROL); doc.rect(0, 0, W, 24, "F");
+    doc.setFillColor(...ORANGE); doc.rect(0, 24, W, 1.2, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(255, 255, 255); doc.text("GART", 12, 8.5);
+    doc.setTextColor(...ORANGE); doc.text(".", 12 + doc.getTextWidth("GART"), 8.5);
+    doc.setFontSize(14); doc.setTextColor(255, 255, 255); doc.text(E.titulo.toUpperCase(), 12, 15.5);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(207, 234, 239); doc.text(E.linha2, 12, 21);
+    doc.setTextColor(107, 102, 104);
+    if (E.filtros.length) doc.text("Filtros: " + E.filtros.join(" · "), 12, 30);
+    const body = []; let cur = "";
+    E.data.forEach(r => {
+      if (r.x.familia !== cur) { cur = r.x.familia; body.push([{content: cur.toUpperCase(), colSpan: E.cols.length, styles: {fillColor: [224, 238, 240], fontStyle: "bold", textColor: PETROL_DK}}]); }
+      body.push(E.cols.map((c, j) => {
+        const v = r.v[j];
+        if (v === null || v === "" || v === undefined) return "–";
+        if (c.money) return G.brl(v) + (c.metro ? "/" + (r.x.med_un || "m") : "");
+        if (c.k === "ipi" || c.k === "st") return G.pct(v);
+        if (c.num) return G.mm(v);
+        return String(v);
+      }));
+    });
+    doc.autoTable({
+      head: [E.cols.map(c => c.t)], body, startY: E.filtros.length ? 33 : 29, theme: "grid",
+      styles: {fontSize: E.cols.length > 12 ? 6.4 : 7.5, cellPadding: 1.4, lineColor: [227, 225, 223], lineWidth: .1, textColor: [35, 31, 32]},
+      headStyles: {fillColor: PETROL_DK, textColor: 255, fontStyle: "bold", halign: "center"},
+      columnStyles: Object.fromEntries(E.cols.map((c, j) => [j, c.money || c.num ? {halign: "right"} : (c.k === "ipi" || c.k === "st") ? {halign: "center"} : {}])),
+      margin: {left: 10, right: 10, bottom: 14},
+      didDrawPage: () => {
+        const H = doc.internal.pageSize.getHeight();
+        doc.setFontSize(7.5); doc.setTextColor(120);
+        doc.text(`${cfg.empresa || "NMC GART"} · ${cfg.titulo} · ${cfg.revisao} · Preço c/ impostos = preço tabela + IPI + ST · ${cfg.observacao || ""}`, 10, H - 7);
+        doc.text(`Página ${doc.internal.getNumberOfPages()}`, W - 10, H - 7, {align: "right"});
+      },
+    });
+    doc.save(fileName("pdf"));
+  });
+
+  colMenu(); header(); render();
+  return {
+    setTabelas(list, selectId) { esp.tabelas = list || []; if (selectId !== undefined) st.tab = selectId; fillTabs(); header(); render(); },
+  };
+};
+if (!window.GART_DEFER) window.GART_APP();
+
+</script>
+</body>
+</html>
