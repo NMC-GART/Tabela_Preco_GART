@@ -288,7 +288,7 @@ textarea{min-height:64px;resize:vertical}
   </section>
 </div>
 </div>
-<div class="foot"><span style="opacity:.6">site v5 · 02/11/2026</span><span id="foot-l"></span><a href="index.html">Tabela oficial</a></div>
+<div class="foot"><span style="opacity:.6">site v5.1 · 02/11/2026</span><span id="foot-l"></span><a href="index.html">Tabela oficial</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';document.head.appendChild(s)"></script>
@@ -417,12 +417,12 @@ window.GART_APP = async (opts = {}) => {
   /* ---------- cabeçalho / textos ---------- */
   function header() {
     const t = currentTab();
-    $("titulo").textContent = t ? t.titulo : cfg.titulo;
+    $("titulo").textContent = t ? "Tabela Especial" : cfg.titulo;
     document.title = (t ? t.titulo : cfg.titulo) + " · " + cfg.revisao;
     $("rev").textContent = `${cfg.revisao} · vigência ${G.dataBR(cfg.vigencia)}`;
-    $("subtitulo").textContent = t
-      ? `Baseada na ${cfg.titulo} (${cfg.revisao}) ${t.cliente ? " · " + t.cliente : ""}`
-      : `${cfg.empresa || "NMC GART"} · preço por unidade de venda e por metro linear, com IPI e ST da UF de destino · coloridos por cor, com código e EAN`;
+    if (t) $("subtitulo").innerHTML = (t.cliente ? `<b style="font-size:1.15em">Cliente: ${G.esc(t.cliente)}</b>` : `<b>${G.esc(t.titulo)}</b>`)
+      + (t.observacao ? `<br>${G.esc(t.observacao)}` : "") + `<br><span style="opacity:.75">Baseada na ${G.esc(cfg.titulo)} (${G.esc(cfg.revisao)})${t.validade ? ` · condição válida até ${G.dataBR(t.validade)}` : ""}</span>`;
+    else $("subtitulo").textContent = `${cfg.empresa || "NMC GART"} · preço por unidade de venda e por metro linear, com IPI e ST da UF de destino · coloridos por cor, com código e EAN`;
     const info = [cfg.observacao, `Atualizada em ${G.dataBR(prod.versao)}.`].filter(Boolean);
     if (t && t.observacao) info.unshift(t.observacao);
     if (t && t.validade) info.unshift(`Condição válida até ${G.dataBR(t.validade)}.`);
@@ -567,11 +567,13 @@ window.GART_APP = async (opts = {}) => {
   /* ---------- exportação ---------- */
   function exportData() {
     const cols = activeCols(), C = ctx(), tab = currentTab();
-    const titulo = tab ? tab.titulo : cfg.titulo;
+    const titulo = tab ? "Tabela Especial" : cfg.titulo;
+    const cliente = tab ? (tab.cliente ? "Cliente: " + tab.cliente : tab.titulo) : "", obs = tab ? tab.observacao || "" : "";
     const linha2 = `${cfg.revisao} · vigência ${G.dataBR(cfg.vigencia)} · Canal: ${st.canal} · UF: ${st.uf}${st.canal === "Revenda" ? ` (ICMS ${Math.round(prod.ufs[st.uf].icms * 100)}%)` : " (ICMS 18% incluso)"}`;
     const filtros = FK.filter(k => st.f[k]).map(k => `${k}: ${st.f[k] === "__vazio" ? "vazio" : st.f[k]}`).concat(st.q ? [`busca: ${st.q}`] : []);
     const vis = visible();
-    return {cols, titulo, linha2, filtros, data: vis.map(x => { const p = G.price(x, C); return {x, p, v: cols.map(c => G.value(x, p, c.k))}; })};
+    const linha2b = tab && tab.validade ? `${linha2} · condição válida até ${G.dataBR(tab.validade)}` : linha2;
+    return {cols, titulo, cliente, obs, linha2: linha2b, filtros, data: vis.map(x => { const p = G.price(x, C); return {x, p, v: cols.map(c => G.value(x, p, c.k))}; })};
   }
   const fileName = ext => `${G.slug(currentTab() ? currentTab().titulo : cfg.titulo)}-${G.slug(cfg.revisao)}-${st.canal.toLowerCase()}-${st.uf}.${ext}`;
 
@@ -585,7 +587,9 @@ window.GART_APP = async (opts = {}) => {
       const F = (color, size = 9, bold = false, extra = {}) => ({name: "Arial", size, bold, color: {argb: color}, ...extra});
       const fill = c => ({type: "pattern", pattern: "solid", fgColor: {argb: c}});
       const wb = new ExcelJS.Workbook(); wb.creator = cfg.empresa || "NMC GART"; wb.created = new Date();
-      const ws = wb.addWorksheet("Tabela de Preço", {views: [{state: "frozen", ySplit: 7, showGridLines: false}]});
+      const H0 = 2 + (E.cliente ? 1 : 0) + (E.obs ? 1 : 0); // linha da faixa de condições
+      const RC = H0 + 1, RO = H0 + 2, RI = H0 + 3, RG = H0 + 4, RH = H0 + 5; // condições, filete, filtros, títulos (grupo, coluna)
+      const ws = wb.addWorksheet(tab ? "Tabela Especial" : "Tabela de Preço", {views: [{state: "frozen", ySplit: RH, showGridLines: false}]});
       const W = {modelo: 12, cor: 17, codigo: 14, ean: 16, linha: 26, esp: 10, alt: 9, comp: 12, unidade: 22, embalagem: 16, ipi: 7, st: 7, tab: 13, com: 14, m: 13, mc: 14};
       ws.columns = E.cols.map(c => ({width: W[c.k] || 12}));
       const band = (r, h, value, font, bg, align = "left") => {
@@ -597,12 +601,13 @@ window.GART_APP = async (opts = {}) => {
       band(1, 30, {richText: [{text: "GART", font: F("FFFFFFFF", 20, true)}, {text: ".", font: F(OR, 20, true)},
                               {text: "    " + (cfg.empresa || "NMC GART"), font: F("FFCFEAEF", 9)}]}, F("FFFFFFFF", 20, true), PE);
       band(2, 24, E.titulo.toUpperCase(), F("FFFFFFFF", 14, true), PE);
-      band(3, 18, E.linha2, F("FFCFEAEF", 9.5), PE);
-      band(4, 4, "", F(INK), OR);
-      const info = [];
-      if (tab) { if (tab.cliente) info.push("Cliente: " + tab.cliente); if (tab.validade) info.push("Condição válida até " + G.dataBR(tab.validade)); if (tab.observacao) info.push(tab.observacao); }
-      if (E.filtros.length) info.push("Filtros: " + E.filtros.join(" · "));
-      band(5, info.length ? 20 : 8, info.join("   ·   "), F(SL, 9, false, {italic: true}), "FFFFFFFF");
+      let rb = 3;
+      if (E.cliente) band(rb++, 22, E.cliente, F("FFFFFFFF", 12.5, true), PE);
+      if (E.obs) band(rb++, 18, E.obs, F("FFFFFFFF", 10, false, {italic: true}), PE);
+      band(RC, 18, E.linha2, F("FFCFEAEF", 9.5), PE);
+      band(RO, 4, "", F(INK), OR);
+      const info = E.filtros.length ? ["Filtros: " + E.filtros.join(" · ")] : [];
+      band(RI, info.length ? 20 : 8, info.join("   ·   "), F(SL, 9, false, {italic: true}), "FFFFFFFF");
       // títulos das colunas em dois níveis, como no site
       const grp = [["Produto", ["modelo", "cor", "codigo", "ean", "linha"]], ["Medidas (mm)", ["esp", "alt", "comp"]], ["Venda", ["unidade", "embalagem"]],
                    ["Impostos", ["ipi", "st"]], ["Por unidade de venda", ["tab", "com"]], ["Por metro linear", ["m", "mc"]]];
@@ -612,21 +617,21 @@ window.GART_APP = async (opts = {}) => {
       for (const [t, ks] of grp) {
         const n = E.cols.filter(c => ks.includes(c.k)).length; if (!n) continue;
         isGrpStart.add(j);
-        if (n > 1) ws.mergeCells(6, j, 6, j + n - 1);
-        ws.getCell(6, j).value = t; j += n;
+        if (n > 1) ws.mergeCells(RG, j, RG, j + n - 1);
+        ws.getCell(RG, j).value = t; j += n;
       }
       const hdrBorder = {left: {style: "thin", color: {argb: "FF2F7F8C"}}};
       for (let k = 1; k <= N; k++) {
-        const g = ws.getCell(6, k), h = ws.getCell(7, k), c = E.cols[k - 1];
+        const g = ws.getCell(RG, k), h = ws.getCell(RH, k), c = E.cols[k - 1];
         g.fill = fill(PE_DK); g.font = F("FFFFFFFF", 8.5, true); g.alignment = {horizontal: "center", vertical: "middle"};
         h.value = short[c.k] || c.t; h.fill = fill(PE); h.font = F("FFFFFFFF", 9, true);
         h.alignment = {horizontal: c.money || c.num || c.k === "ipi" || c.k === "st" ? "center" : "left", vertical: "middle", wrapText: true, indent: c.money || c.num ? 0 : 1};
         if (isGrpStart.has(k) && k > 1) { g.border = hdrBorder; h.border = hdrBorder; }
       }
-      ws.getRow(6).height = 16; ws.getRow(7).height = 28;
+      ws.getRow(RG).height = 16; ws.getRow(RH).height = 28;
       // linhas de produtos, agrupadas por família
       const fmtMoney = '"R$" #,##0.00', thin = {style: "hair", color: {argb: "FFD5D2CF"}}, sep = {style: "thin", color: {argb: "FFB8D4D9"}};
-      let r = 8, cur = "", zebra = false;
+      let r = RH + 1, cur = "", zebra = false;
       const counts = {}; E.data.forEach(d => counts[d.x.familia] = (counts[d.x.familia] || 0) + 1);
       for (const d of E.data) {
         if (d.x.familia !== cur) {
@@ -666,11 +671,11 @@ window.GART_APP = async (opts = {}) => {
       const notes = ["Preço c/ impostos = preço tabela + IPI + ST." + (st.canal === "Construtora" ? " Construtora: ICMS 18% incluso, sem DIFAL e sem ST." : st.uf === "AM" ? " AM: desconto Suframa aplicado." : ""),
                      cfg.observacao || "", `Gerada em ${new Date().toLocaleDateString("pt-BR")} · ${cfg.empresa || "NMC GART"} · ${cfg.titulo} · ${cfg.revisao}`].filter(Boolean);
       for (const t of notes) { ws.mergeCells(r, 1, r, N); const c = ws.getCell(r, 1); c.value = t; c.font = F(SL, 8.5, false, {italic: true}); c.alignment = {indent: 1}; r++; }
-      ws.autoFilter = {from: {row: 7, column: 1}, to: {row: 7, column: N}};
+      ws.autoFilter = {from: {row: RH, column: 1}, to: {row: RH, column: N}};
       // impressão: A4 paisagem, 1 página de largura, cabeçalho das colunas repetido em todas as páginas
       const esc = t => String(t).replace(/&/g, "&&");
       ws.pageSetup = {paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0, horizontalCentered: true,
-                      margins: {left: 0.35, right: 0.35, top: 0.45, bottom: 0.6, header: 0.2, footer: 0.3}, printTitlesRow: "6:7"};
+                      margins: {left: 0.35, right: 0.35, top: 0.45, bottom: 0.6, header: 0.2, footer: 0.3}, printTitlesRow: `${RG}:${RH}`};
       ws.headerFooter.oddFooter = `&L&"Arial"&8&K6B6668${esc(cfg.empresa || "NMC GART")} · ${esc(E.titulo)} · ${esc(cfg.revisao)} · ${esc(st.canal)} · ${esc(st.uf)}&R&"Arial"&8&K6B6668Página &P de &N`;
       const buf = await wb.xlsx.writeBuffer();
       const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([buf], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
@@ -686,14 +691,19 @@ window.GART_APP = async (opts = {}) => {
     const W = doc.internal.pageSize.getWidth();
     // cabeçalho na identidade GART: faixa petróleo, marca "GART." com ponto laranja, filete laranja
     const PETROL = [0, 90, 105], PETROL_DK = [0, 67, 78], ORANGE = [255, 103, 31];
-    doc.setFillColor(...PETROL); doc.rect(0, 0, W, 24, "F");
-    doc.setFillColor(...ORANGE); doc.rect(0, 24, W, 1.2, "F");
+    const obsL = E.obs ? (doc.setFontSize(9.5), doc.splitTextToSize(E.obs, W - 24)) : [];
+    const BH = 24 + (E.cliente ? 6.5 : 0) + obsL.length * 4.6; // altura da faixa
+    doc.setFillColor(...PETROL); doc.rect(0, 0, W, BH, "F");
+    doc.setFillColor(...ORANGE); doc.rect(0, BH, W, 1.2, "F");
     doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(255, 255, 255); doc.text("GART", 12, 8.5);
     doc.setTextColor(...ORANGE); doc.text(".", 12 + doc.getTextWidth("GART"), 8.5);
     doc.setFontSize(14); doc.setTextColor(255, 255, 255); doc.text(E.titulo.toUpperCase(), 12, 15.5);
-    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(207, 234, 239); doc.text(E.linha2, 12, 21);
+    let y = 15.5;
+    if (E.cliente) { y += 6.5; doc.setFontSize(12); doc.text(E.cliente, 12, y); }
+    if (obsL.length) { doc.setFont("helvetica", "italic"); doc.setFontSize(9.5); obsL.forEach(l => { y += 4.6; doc.text(l, 12, y); }); }
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(207, 234, 239); doc.text(E.linha2, 12, BH - 3);
     doc.setTextColor(107, 102, 104);
-    if (E.filtros.length) doc.text("Filtros: " + E.filtros.join(" · "), 12, 30);
+    if (E.filtros.length) doc.text("Filtros: " + E.filtros.join(" · "), 12, BH + 6);
     const body = []; let cur = "";
     E.data.forEach(r => {
       if (r.x.familia !== cur) { cur = r.x.familia; body.push([{content: cur.toUpperCase(), colSpan: E.cols.length, styles: {fillColor: [224, 238, 240], fontStyle: "bold", textColor: PETROL_DK}}]); }
@@ -707,7 +717,7 @@ window.GART_APP = async (opts = {}) => {
       }));
     });
     doc.autoTable({
-      head: [E.cols.map(c => c.t)], body, startY: E.filtros.length ? 33 : 29, theme: "grid",
+      head: [E.cols.map(c => c.t)], body, startY: BH + (E.filtros.length ? 9 : 5), theme: "grid",
       styles: {fontSize: E.cols.length > 12 ? 6.4 : 7.5, cellPadding: 1.4, lineColor: [227, 225, 223], lineWidth: .1, textColor: [35, 31, 32]},
       headStyles: {fillColor: PETROL_DK, textColor: 255, fontStyle: "bold", halign: "center"},
       columnStyles: Object.fromEntries(E.cols.map((c, j) => [j, c.money || c.num ? {halign: "right"} : (c.k === "ipi" || c.k === "st") ? {halign: "center"} : {}])),
